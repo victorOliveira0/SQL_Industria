@@ -1,0 +1,166 @@
+CREATE SCHEMA INDUSTRIA;
+USE INDUSTRIA;
+
+CREATE TABLE DDD(
+	codDDD INT PRIMARY KEY,
+    regiaoDDD VARCHAR(45) NOT NULL
+);
+
+CREATE TABLE TELEFONE(
+	codTelefone INT PRIMARY KEY,
+    numTelefone VARCHAR(20) not null,
+	codDDD INT NOT NULL,
+	numFunc INT NOT NULL,
+	numFornecedor INT NOT NULL,
+    CONSTRAINT DDDTELEFONE
+		FOREIGN KEY (codDDD) REFERENCES DDD (codDDD)
+		ON DELETE CASCADE
+        ON UPDATE CASCADE,
+	CONSTRAINT FUNCIONARIO_TELEFONE
+		FOREIGN KEY (numFunc) REFERENCES FUNCIONARIO (numFunc),
+	CONSTRAINT FORNECEDOR_TELEFONE
+    	FOREIGN KEY (numFornecedor) REFERENCES FORNECEDOR (numFornecedor)
+);
+
+CREATE TABLE FUNCIONARIO (
+	numFunc INT PRIMARY KEY,
+    salarioFunc DECIMAL (7,2) NOT NULL,
+	dataInicioFunc DATE NOT NULL,
+	numDepart INT NOT NULL,
+	CONSTRAINT FUNCIONARIO_DEPARTAMENTO
+		FOREIGN KEY (numDepart) REFERENCES DEPARTAMENTO (numDepart)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+);
+
+CREATE TABLE DEPARTAMENTO (
+	numDepart INT AUTO_INCREMENT PRIMARY KEY,
+    setorDepart VARCHAR(45) NOT NULL
+);
+
+CREATE TABLE PROJETO (
+	numProjeto INT PRIMARY KEY,
+    orcaProjeto DECIMAL (8,2)
+);
+
+CREATE TABLE FUNCIONARIO_PROJETO (
+	codFunc INT PRIMARY KEY,
+	numFunc INT NOT NULL,
+    numProjeto INT NOT NULL,
+    dataInicioProjeto DATE,
+    horasTrabalhadasProjeto FLOAT,
+    CONSTRAINT FUNCIONARIO
+		FOREIGN KEY (numFunc) REFERENCES FUNCIONARIO (numFunc),
+	CONSTRAINT PROJETO
+		FOREIGN KEY (numProjeto) REFERENCES PROJETO (numProjeto)
+);
+
+CREATE TABLE FORNECEDOR (
+	numFornecedor INT PRIMARY KEY,
+	nomeFornecedor VARCHAR(45) NOT NULL
+);
+
+CREATE TABLE ENDERECO (
+	codEndereco INT PRIMARY KEY,
+    lograEndereco VARCHAR(45) NOT NULL,
+    numEndereco INT NOT NULL,
+    cidadeEndereco VARCHAR(45) NOT NULL,
+    estadoEndereco VARCHAR(45) NOT NULL,
+    numFornecedor INT NOT NULL,
+	numDeposito INT NOT NULL,
+    CONSTRAINT ENDERECO_FORNECEDOR
+		FOREIGN KEY (numfornecedor) REFERENCES FORNECEDOR (numFornecedor),
+	CONSTRAINT ENDERECO_DEPOSITO
+		FOREIGN KEY (numDeposito) REFERENCES DEPOSITO (numDeposito)
+);
+
+CREATE TABLE DEPOSITO (
+	numDeposito INT PRIMARY KEY,
+    nomeDeposito VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE PECA (
+	numPeca INT PRIMARY KEY,
+    pesoPeca FLOAT NOT NULL,
+    corPeca VARCHAR(45) NOT NULL,
+    numDeposito INT NOT NULL,
+    CONSTRAINT PECA_DEPOSITO
+		FOREIGN KEY (numDeposito) REFERENCES DEPOSITO (numDeposito),
+	CONSTRAINT CHECK_PESO
+		CHECK (pesoPeca>0)
+);
+
+CREATE TABLE PECA_FORNECEDOR (
+	codPecaFor INT PRIMARY KEY,
+    numfornecedor INT NOT NULL,
+    numPeca INT NOT NULL,
+    CONSTRAINT PECA
+		FOREIGN KEY (numPeca) REFERENCES PECA (numPeca),
+	CONSTRAINT FORNECEDOR
+		FOREIGN KEY (numFornecedor) REFERENCES FORNECEDOR (numFornecedor)
+);
+
+CREATE TABLE FORNECEDOR_PROJETO (
+	codForProj INT PRIMARY KEY,
+    numFornecedor INT NOT NULL,
+    numProjeto INT NOT NULL,
+    nomeMaterial VARCHAR(100) NOT NULL,
+    qntdMaterial INT NOT NULL,
+    CONSTRAINT PROJETO_FORN
+		FOREIGN KEY (numProjeto) REFERENCES PROJETO (numProjeto),
+	CONSTRAINT FORNECEDOR_PROJ
+		FOREIGN KEY (numFornecedor) REFERENCES FORNECEDOR (numFornecedor)
+);
+
+INSERT INTO DDD (codDDD, regiaoDDD) VALUES
+(11, 'São Paulo'),
+(21, 'Rio de Janeiro'),
+(31, 'Minas Gerais'),
+(41, 'Paraná'),
+(47, 'Santa Catarina'),
+(51, 'Rio Grande do Sul'),
+(61, 'Distrito Federal'),
+(62, 'Goiás'),
+(63, 'Tocantins'),
+(65, 'Mato Grosso'),
+(67, 'Mato Grosso do Sul'),
+(68, 'Acre'),
+(69, 'Rondônia'),
+(71, 'Bahia'),
+(79, 'Sergipe'),
+(81, 'Pernambuco'),
+(82, 'Alagoas'),
+(83, 'Paraíba'),
+(84, 'Rio Grande do Norte'),
+(85, 'Ceará'),
+(86, 'Piauí'),
+(87, 'Pernambuco'),
+(91, 'Pará'),
+(92, 'Amazonas'),
+(95, 'Amapá'),
+(98, 'Maranhão'),
+;
+
+SELECT * FROM DDD;
+
+INSERT INTO DEPARTAMENTO (setorDepart) VALUES
+("RH"),
+("TI"),
+("COMPRAS"),
+("VENDAS"),
+("CONTABILIDADE"),
+("PROJETOS");
+
+SELECT * FROM DEPARTAMENTO;
+
+DROP TABLE DDD;
+DROP TABLE FORNECEDOR;
+DROP TABLE ENDERECO;
+DROP TABLE DEPOSITO;
+DROP TABLE DEPARTAMENTO;
+DROP TABLE FORNECEDOR_PROJETO;
+DROP TABLE FUNCIONARIO;
+DROP TABLE PECA;
+DROP TABLE PROJETO;
+DROP TABLE FUNCIONARIO_PROJETO;
+DROP TABLE TELEFONE;
